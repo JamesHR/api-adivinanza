@@ -44,7 +44,9 @@ class GameModel:
             "password": hashed_password,
             "numero_secreto": random.randint(1, MAX_NUMBER),
             "intentos": 0,
-            "juego_activo": True
+            "juego_activo": True,
+            "partidas_jugadas": 0,
+            "puntos": 0
         }
         GameModel.guardar_datos(datos)
         return "perfil_creado"
@@ -76,7 +78,26 @@ class GameModel:
             "password": GameModel.cargar_estado(usuario)["password"],
             "numero_secreto": random.randint(1, MAX_NUMBER),
             "intentos": 0,
-            "juego_activo": True
+            "juego_activo": True,
+            "partidas_jugadas": GameModel.cargar_estado(usuario)["partidas_jugadas"],
+            "puntos": GameModel.cargar_estado(usuario)["puntos"]
         }
         GameModel.guardar_estado(usuario, estado)
         return estado
+
+    @staticmethod
+    def actualizar_estadisticas(usuario, intentos):
+        datos = GameModel.cargar_datos()
+        perfil = datos[usuario]
+
+        perfil["partidas_jugadas"] += 1
+
+        if intentos <= 5:
+            perfil["puntos"] += 5
+        elif 6 <= intentos <= 10:
+            perfil["puntos"] += 3
+        else:
+            perfil["puntos"] += 1
+
+        GameModel.guardar_datos(datos)
+        return perfil

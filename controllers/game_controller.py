@@ -98,6 +98,7 @@ def guess_number():
         respuesta = "Muy alto"
     else:
         respuesta = f"¡Correcto! Adivinaste en {estado['intentos']} intentos."
+        estado = GameModel.actualizar_estadisticas(usuario, estado["intentos"])
         estado["juego_activo"] = False
 
     GameModel.guardar_estado(usuario, estado)
@@ -136,3 +137,22 @@ def restart_game():
 
     estado = GameModel.reiniciar_juego(usuario)
     return jsonify({"message": f"¡El juego se ha reiniciado para {usuario}! Adivina el nuevo número."}), 201
+
+def get_statistics():
+    auth_header = request.headers.get("Authorization")
+    token = auth_header.split(" ")[1] if auth_header else None
+    usuario = verify_token(token)
+
+    if not usuario:
+        return jsonify({"message": "Token no válido o expirado. Inicia sesión nuevamente."}), 401
+
+    estado = GameModel.cargar_estado(usuario)
+    
+    if not estado:
+        return jsonify({"message": f"No se encontró el perfil para el usuario '{usuario}'. Regístrate primero."}), 404
+
+    return jsonify({
+        "usuario": usuario,
+        "partidas_jugadas": estado["partidas_jugadas"],
+        "puntos": estado["puntos"]
+    }), 200
