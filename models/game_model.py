@@ -15,7 +15,7 @@ class GameModel:
             with open(GameModel.DATA_FILE, 'r') as f:
                 return json.load(f)
         except FileNotFoundError:
-            estado_inicial = {"numero_secreto": 0, "intentos": 0}
+            estado_inicial = {"numero_secreto": 0, "intentos": 0, "juego_activo": False}
             GameModel.guardar_estado(estado_inicial)
             return estado_inicial
 
@@ -23,7 +23,8 @@ class GameModel:
     def reiniciar_juego():
         estado = {
             "numero_secreto": random.randint(1, 100),
-            "intentos": 0
+            "intentos": 0,
+            "juego_activo": True
         }
         GameModel.guardar_estado(estado)
         return estado

@@ -7,8 +7,11 @@ def start_game():
 
 def guess_number(numero):
     estado = GameModel.cargar_estado()
-    estado["intentos"] += 1
 
+    if not estado.get("juego_activo"):
+        return jsonify({"message": "El juego ya ha terminado. Reinicia el juego para volver a jugar."})
+
+    estado["intentos"] += 1
     numero_secreto = estado["numero_secreto"]
 
     if numero < numero_secreto:
@@ -17,15 +20,21 @@ def guess_number(numero):
         respuesta = "Muy alto"
     else:
         respuesta = f"¡Correcto! Adivinaste en {estado['intentos']} intentos."
+        estado["juego_activo"] = False
 
     GameModel.guardar_estado(estado)
     return jsonify({"message": respuesta})
 
 def get_status():
     estado = GameModel.cargar_estado()
+    if estado.get("juego_activo"):
+        message = "Sigue intentando, ¡puedes hacerlo!"
+    else:
+        message = "El juego ha terminado. Reinicia el juego para volver a jugar."
+        
     return jsonify({
         "intentos": estado["intentos"],
-        "message": "Sigue intentando, ¡puedes hacerlo!"
+        "message": message
     })
 
 def restart_game():
