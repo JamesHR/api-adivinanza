@@ -1,6 +1,12 @@
 import json
 import random
 import bcrypt
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+MAX_NUMBER = int(os.environ.get('MAX_NUMBER'))
 
 class GameModel:
     DATA_FILE = 'data.json'
@@ -36,7 +42,7 @@ class GameModel:
         datos[usuario] = {
             "correo": correo,
             "password": hashed_password,
-            "numero_secreto": random.randint(1, 100),
+            "numero_secreto": random.randint(1, MAX_NUMBER),
             "intentos": 0,
             "juego_activo": True
         }
@@ -68,7 +74,7 @@ class GameModel:
         estado = {
             "correo": GameModel.cargar_estado(usuario)["correo"],
             "password": GameModel.cargar_estado(usuario)["password"],
-            "numero_secreto": random.randint(1, 100),
+            "numero_secreto": random.randint(1, MAX_NUMBER),
             "intentos": 0,
             "juego_activo": True
         }

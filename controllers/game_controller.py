@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
+MAX_NUMBER = int(os.environ.get('MAX_NUMBER'))
 
 def generate_token(usuario):
     expiration = datetime.utcnow() + timedelta(hours=1)
@@ -64,7 +65,7 @@ def start_game():
         return jsonify({"message": "Token no válido o expirado. Inicia sesión nuevamente."}), 401
 
     estado = GameModel.reiniciar_juego(usuario)
-    return jsonify({"message": f"¡El juego ha comenzado para {usuario}! Adivina un número entre 1 y 100."}), 201
+    return jsonify({"message": f"¡El juego ha comenzado para {usuario}! Adivina un número entre 1 y {MAX_NUMBER}."}), 201
 
 def guess_number():
     auth_header = request.headers.get("Authorization")
