@@ -2,6 +2,7 @@ import jwt
 import os
 from datetime import datetime, timedelta
 from flask import jsonify, request
+from flask import send_file
 from models.game_model import GameModel
 from dotenv import load_dotenv
 
@@ -9,6 +10,7 @@ load_dotenv()
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 MAX_NUMBER = int(os.environ.get('MAX_NUMBER'))
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN")
 
 def generate_token(usuario):
     expiration = datetime.utcnow() + timedelta(hours=1)
@@ -23,6 +25,12 @@ def verify_token(token):
         return None
     except jwt.InvalidTokenError:
         return None
+
+def check_admin_token():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or auth_header != f"Bearer {ADMIN_TOKEN}":
+        return jsonify({"message": "Acceso no autorizado"}), 403
+    return None
 
 def register_user():
     data = request.get_json()
@@ -171,3 +179,29 @@ def get_leaderboard():
     leaderboard.sort(key=lambda x: x["puntos"], reverse=True)
 
     return jsonify(leaderboard), 200
+
+def export_data():
+    auth_error = check_admin_token()
+    if auth_error:
+        return auth_error
+
+    return send_file(GameModel.DATA_FILE, as_attachment=True)
+
+def import_data():
+    auth_error = check_admin_token()
+    if auth_error:
+        return auth_error
+        
+    if 'file' not in request.files:
+        return jsonify({"message": "No se ha subido ningún archivo."}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"message": "No se ha seleccionado ningún archivo."}), 400
+
+    if file and file.filename.endswith('.json'):
+        file.save(GameModel.DATA_FILE)
+        return jsonify({"message": "Datos importados exitosamente."}), 200
+    else:
+        return jsonify({"message": "El archivo debe ser un JSON."}), 400

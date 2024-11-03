@@ -1,5 +1,5 @@
 from flask import Flask
-from controllers.game_controller import register_user, login_user, start_game, guess_number, get_status, restart_game, get_statistics, get_leaderboard
+from controllers.game_controller import register_user, login_user, start_game, guess_number, get_status, restart_game, get_statistics, get_leaderboard, export_data, import_data
 from dotenv import load_dotenv
 import os
 
@@ -16,3 +16,5 @@ app.route('/status', methods=['GET'])(get_status)
 app.route('/restart', methods=['POST'])(restart_game)
 app.route('/statistics', methods=['GET'])(get_statistics)
 app.route('/leaderboard', methods=['GET'])(get_leaderboard)
+app.route('/export', methods=['GET'])(export_data)
+app.route('/import', methods=['POST'])(import_data)
