@@ -156,3 +156,18 @@ def get_statistics():
         "partidas_jugadas": estado["partidas_jugadas"],
         "puntos": estado["puntos"]
     }), 200
+
+def get_leaderboard():
+    datos = GameModel.cargar_datos()
+    leaderboard = []
+
+    for usuario, perfil in datos.items():
+        leaderboard.append({
+            "usuario": usuario,
+            "puntos": perfil["puntos"],
+            "partidas_jugadas": perfil["partidas_jugadas"]
+        })
+
+    leaderboard.sort(key=lambda x: x["puntos"], reverse=True)
+
+    return jsonify(leaderboard), 200
