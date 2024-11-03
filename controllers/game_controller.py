@@ -31,7 +31,7 @@ def register_user():
     password = data.get("password")
 
     if not usuario or not correo or not password:
-        return jsonify({"message": "Se requiere nombre de usuario, correo y password para registrarse."}), 400
+        return jsonify({"message": "Se requiere nombre de usuario, correo y contraseña para registrarse."}), 400
 
     resultado = GameModel.crear_perfil(usuario, correo, password)
     
@@ -48,13 +48,13 @@ def login_user():
     password = data.get("password")
 
     if not usuario or not password:
-        return jsonify({"message": "Se requiere nombre de usuario y password para iniciar sesión."}), 400
+        return jsonify({"message": "Se requiere nombre de usuario y contraseña para iniciar sesión."}), 400
 
     if GameModel.verificar_credenciales(usuario, password):
         token = generate_token(usuario)
         return jsonify({"message": f"Inicio de sesión exitoso para el usuario '{usuario}'.", "token": token}), 200
     else:
-        return jsonify({"message": "Credenciales incorrectas. Verifica tu nombre de usuario y password."}), 401
+        return jsonify({"message": "Credenciales incorrectas. Verifica tu nombre de usuario y contraseña."}), 401
 
 def start_game():
     auth_header = request.headers.get("Authorization")
