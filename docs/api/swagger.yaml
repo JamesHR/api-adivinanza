@@ -1,0 +1,179 @@
+swagger: "2.0"
+title: "Adivina el Número - ApiDocs"
+info:
+  title: "API-Game: Adivina el Número"
+  version: "1.0.0"
+  description: "API para jugar: Adivina el Número. Permite iniciar una nueva partida, realizar intentos, consultar el estado de la partida y consultar estadísticas de clasificación"
+  contact:
+    name: "Jaime HR"
+externalDocs:
+  description: "Repo: GitHub"
+  url: https://github.com/JamesHR/api-adivinanza
+host: "https://api-adivinanza.onrender.com"
+basePath: "/"
+paths:
+  /register:
+    post:
+      tags:
+        - "user"
+      summary: "Registra un nuevo usuario."
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              usuario:
+                type: string
+                example: "johndoe"
+              correo:
+                type: string
+                example: "johndoe@example.com"
+              password:
+                type: string
+                example: "mypassword"
+      responses:
+        201:
+          description: "Perfil creado exitosamente."
+        400:
+          description: "Se requiere nombre de usuario, correo y contraseña para registrarse."
+        409:
+          description: "Nombre de usuario o correo ya en uso."
+
+  /login:
+    post:
+      tags:
+        - "user"
+      summary: "Inicia sesión de un usuario."
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              usuario:
+                type: string
+                example: "johndoe"
+              password:
+                type: string
+                example: "mypassword"
+      responses:
+        200:
+          description: "Inicio de sesión exitoso."
+        400:
+          description: "Se requiere nombre de usuario y contraseña para iniciar sesión."
+        401:
+          description: "Credenciales incorrectas."
+
+  /start:
+    post:
+      tags:
+        - "game"
+      summary: "Inicia un nuevo juego para el usuario autenticado."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+          description: "Token de autorización (Bearer {token})."
+      responses:
+        201:
+          description: "El juego ha comenzado exitosamente."
+        401:
+          description: "Token no válido o expirado."
+
+  /guess:
+    post:
+      tags:
+        - "game"
+      summary: "Realiza una suposición sobre el número secreto."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+          description: "Token de autorización (Bearer {token})."
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: object
+            properties:
+              numero:
+                type: integer
+                example: 5
+      responses:
+        200:
+          description: "Respuesta sobre la suposición (muy bajo, muy alto o correcto)."
+        400:
+          description: "Se requiere un número para adivinar."
+        401:
+          description: "Token no válido o expirado."
+        404:
+          description: "Perfil de usuario no encontrado."
+
+  /status:
+    get:
+      tags:
+        - "game"
+      summary: "Obtiene el estado actual del juego para el usuario autenticado."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+          description: "Token de autorización (Bearer {token})."
+      responses:
+        200:
+          description: "Estado del juego."
+        401:
+          description: "Token no válido o expirado."
+        404:
+          description: "Perfil de usuario no encontrado."
+
+  /restart:
+    post:
+      tags:
+        - "game"
+      summary: "Reinicia el juego para el usuario autenticado."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+          description: "Token de autorización (Bearer {token})."
+      responses:
+        201:
+          description: "El juego se ha reiniciado exitosamente."
+        401:
+          description: "Token no válido o expirado."
+
+  /statistics:
+    get:
+      tags:
+        - "user"
+      summary: "Obtiene estadísticas del usuario autenticado."
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+          description: "Token de autorización (Bearer {token})."
+      responses:
+        200:
+          description: "Estadísticas del usuario."
+        401:
+          description: "Token no válido o expirado."
+        404:
+          description: "Perfil de usuario no encontrado."
+
+  /leaderboard:
+    get:
+      tags:
+        - "game"
+      summary: "Obtiene el ranking de jugadores."
+      responses:
+        200:
+          description: "Lista de jugadores en el ranking."

@@ -1,11 +1,12 @@
 from flask import Flask
 from controllers.game_controller import register_user, login_user, start_game, guess_number, get_status, restart_game, get_statistics, get_leaderboard, export_data, import_data
 from dotenv import load_dotenv
-import os
+from flasgger import Swagger
+from docs.api.swagger_config import swagger_config
 
 load_dotenv()
-
 app = Flask(__name__)
+swagger = Swagger(app, config=swagger_config, template_file='docs/api/swagger.yaml')
 
 # Rutas
 app.route('/register', methods=['POST'])(register_user)
