@@ -3,10 +3,12 @@ from controllers.game_controller import register_user, login_user, start_game, g
 from dotenv import load_dotenv
 from flasgger import Swagger
 from docs.api.swagger_config import swagger_config
+from flask_cors import CORS
 
 load_dotenv()
 app = Flask(__name__)
 swagger = Swagger(app, config=swagger_config, template_file='docs/api/swagger.yaml')
+CORS(app)
 
 # Rutas
 app.route('/register', methods=['POST'])(register_user)
